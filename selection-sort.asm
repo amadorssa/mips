@@ -1,9 +1,10 @@
 	.data
-mensaje: .asciiz "Antes de ordenar, los números son:\n"
-espacio: .asciiz " "
-salto: .asciiz "\n"
-despues: .asciiz "Después de ordenar, los números son:\n"
+msg_before: .asciiz "Antes de ordenar, los números son:\n"
+msg_after: .asciiz "Después de ordenar, los números son:\n"
 error_msg: .asciiz "Error: El tamaño del arreglo debe ser al menos 1.\n"
+space: .asciiz " "
+newline: .asciiz "\n"
+
 a:	.word 5, 3, 8, 6, 2, 7, 4, 10, 1, 9
 n:	.word 10
 
@@ -18,9 +19,9 @@ n:	.word 10
 	# Cargar la dirección del arreglo en $t5
 	la $t5, a 
 	
-	# Imprimir el mensaje "Antes de ordenar, los números son:"
+	# Imprimir el mensaje antes de ordenar
 	li $v0, 4
-	la $a0, mensaje
+	la $a0, msg_before
 	syscall
 	
 	# Inicializar i en 0
@@ -36,18 +37,18 @@ imprimir_arreglo:
 	li $v0, 1 # Syscall para imprimir entero
 	syscall
 	
-	# Imprimir un espacio 
+	# Imprimir un espacio
 	li $v0, 4
-	la $a0, espacio
+	la $a0, space
 	syscall
 	
 	addi $t0, $t0, 1 # i++
 	j imprimir_arreglo # Repetir
 	
 fin_impresion: 
-	# Imprimir un salto de línea
+	# Imprimir un salto de linea
 	li $v0, 4
-	la $a0, salto
+	la $a0, newline
 	syscall
 	
 	li $t0, 0 # i
@@ -55,10 +56,13 @@ fin_impresion:
 	li $t2, 0 # iMax
 	addi $t4, $t3, -1 # n - 1
 	
-forj:	beq $t1, $t4, ordenar_terminado
+forj:	
+	beq $t1, $t4, ordenar_terminado
 	move $t2, $t1
 	addi $t0, $t1, 1
-fori:	beq $t0, $t3, final1
+
+fori:	
+	beq $t0, $t3, final1
 	
 	move $t6, $t0
 	mul $t6, $t6, 4
@@ -73,7 +77,8 @@ fori:	beq $t0, $t3, final1
 	ble $t6, $t7, final3
 	move $t2, $t0
 
-final3: addi $t0, $t0, 1
+final3: 
+	addi $t0, $t0, 1
 	j fori
 
 final1:
@@ -101,9 +106,9 @@ final4:
 
 # Cuando termina el ordenamiento
 ordenar_terminado:
-	# Imprimir el mensaje "Después de ordenar, los números son:"
+	# Imprimir el mensaje despues de ordenar
 	li $v0, 4
-	la $a0, despues
+	la $a0, msg_after
 	syscall
 
 	# Imprimir el arreglo ordenado
@@ -119,18 +124,19 @@ imprimir_ordenado:
 	li $v0, 1 # Syscall para imprimir entero
 	syscall
 	
-	# Imprimir un espacio
+	# Imprimir un space
+
 	li $v0, 4
-	la $a0, espacio
+	la $a0, space
 	syscall
 	
 	addi $t0, $t0, 1 # i++
 	j imprimir_ordenado # Repetir
 	
 fin_impresion_ordenado:
-	# Imprimir un salto de línea
+	# Imprimir un salto de linea
 	li $v0, 4
-	la $a0, salto
+	la $a0, newline
 	syscall
 
 	# Terminar el programa
@@ -139,9 +145,11 @@ fin_impresion_ordenado:
 
 # Si el tamaño del arreglo es menor que 1, se imprime un mensaje de error y se sale
 error_exit:
-	li $v0, 4	# Syscall para imprimir string
+	# Imprimir mensaje de error
+	li $v0, 4
 	la $a0, error_msg	# Cargar la dirección del mensaje de error
 	syscall
 	
-	li $v0, 10	# Syscall para terminar el programa
+	# Salir del programa
+	li $v0, 10
 	syscall
